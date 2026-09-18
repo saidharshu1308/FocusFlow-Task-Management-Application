@@ -1,0 +1,40 @@
+Project Task Management Application/
+│
+├── backend/
+│   ├── config/
+│   │   └── database.js
+│   │
+│   ├── controllers/
+│   │   ├── achievementController.js
+│   │   ├── analyticsController.js
+│   │   ├── authController.js
+│   │   ├── focusController.js
+│   │   ├── subtaskController.js
+│   │   └── taskController.js
+│   │
+│   ├── middleware/
+│   │   └── authMiddleware.js
+│   │
+│   ├── routes/
+│   │   ├── achievementRoutes.js
+│   │   ├── analyticsRoutes.js
+│   │   ├── authRoutes.js
+│   │   ├── focusRoutes.js
+│   │   ├── subtaskRoutes.js
+│   │   └── taskRoutes.js
+│   │
+│   ├── utils/
+│   │   ├── focusScore.js
+│   │   └── productivity.js
+│   │
+│   ├── .env
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── package.json
+│   ├── README.md
+│   └── server.js
+│
+├── frontend/
+│   └── FocusFlow_try4_backend_connected.html
+│
+└── README.md

@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FocusFlow - Student Productivity & Task Management</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* ==========================================================================
+       1. VARIABLES & BASE STYLES
+       ========================================================================== */
+    :root {
+      --bg-dark: #0f111a;
+      --bg-card: rgba(26, 29, 45, 0.7);
+      --bg-card-hover: rgba(36, 40, 61, 0.8);
+      --bg-sidebar: #141724;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(139, 92, 246, 0.5);
+      
+      --accent-purple: #8b5cf6;
+      --accent-purple-hover: #7c3aed;
+      --accent-lavender: #c4b5fd;
+      --accent-pink: #ec4899;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-subtle: #6b7280;
+
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.07);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-full);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-purple);
+    }
+
+    /* Utility Classes */
+    .hidden { display: none !important; }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-1 { gap: 0.25rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
+    .gap-4 { gap: 1rem; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all var(--transition-fast);
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-hover));
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+    }
+
+    .btn-secondary {
+      background: var(--glass-bg);
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--accent-red);
+    }
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+
+    .btn-icon {
+      padding: 0.5rem;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-icon:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.625rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .badge-purple { background: rgba(139, 92, 246, 0.15); color: var(--accent-lavender); border: 1px solid rgba(139, 92, 246, 0.3); }
+    .badge-pink { background: rgba(236, 72, 153, 0.15); color: var(--accent-pink); border: 1px solid rgba(236, 72, 153, 0.3); }
+    .badge-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-red { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    /* Card Wrapper */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--glass-shadow);
+      transition: border-color var(--transition-fast), transform var(--transition-fast);
+    }
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Forms & Inputs */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+      margin-bottom: 1.25rem;
+    }
+    .form-group label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .input-control {
+      background: rgba(15, 17, 26, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      color: var(--text-main);
+      font-size: 0.875rem;
+      outline: none;
+      transition: all var(--transition-fast);
+      width: 100%;
+    }
+    .input-control:focus {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    }
+    select.input-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1.25rem;
+    }
+
+    /* ==========================================================================
+       2. AUTHENTICATION SCREEN
+       ========================================================================== */
+    #auth-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.15), transparent 40%),
+                  radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.1), transparent 40%),
+                  var(--bg-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .auth-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      width: 100%;
+      max-width: 960px;
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (min-width: 768px) {
+      .auth-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .auth-left {
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .auth-brand i {
+      font-size: 1.75rem;
+      color: var(--accent-purple);
+    }
+
+    .auth-brand h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff, var(--accent-lavender));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .auth-tagline {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
+    }
+
+    .auth-right {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.05));
+      border-left: 1px solid var(--border-color);
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+    }
+
+    .auth-illustration {
+      width: 180px;
+      height: 180px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 15px 35px rgba(139, 92, 246, 0.3);
+      animation: morphing 8s ease-in-out infinite alternate;
+      margin-bottom: 2rem;
+    }
+
+    .auth-illustration i {
+      font-size: 4rem;
+      color: #fff;
+    }
+
+    @keyframes morphing {
+      0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+      100% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%; }
+    }
+
+    /* Password Toggle Wrapper */
+    .password-wrapper {
+      position: relative;
+    }
+    .password-wrapper .toggle-pw {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       3. MAIN LAYOUT & NAVIGATION
+       ========================================================================== */
+    #app-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      transition: transform var(--transition-normal);
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 0.75rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-brand i {
+      font-size: 1.5rem;
+      color: var(--accent-purple);
+    }
+
+    .sidebar-brand h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+      flex: 1;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      padding: 0.75rem 1rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all var(--transition-fast);
+    }
+
+    .nav-item a:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .nav-item.active a {
+      color: var(--accent-lavender);
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+    }
+
+    .nav-item i {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Content Area */
+    .main-wrapper {
+      flex: 1;
+      margin-left: 260px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0; /* Prevents flex overflow */
+    }
+
+    /* Top Bar Header */
+    .top-header {
+      height: 72px;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15, 17, 26, 0.8);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+      font-size: 0.875rem;
+      border: 2px solid var(--border-color);
+    }
+
+    /* Content Views Container */
+    .content-area {
+      padding: 2rem;
+      flex: 1;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .page-subtitle {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Dynamic Toast Notification */
+    #toast-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-main);
+      font-size: 0.875rem;
+      animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-card {
+      background: #181b29;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 540px;
+      box-shadow: var(--glass-shadow);
+      animation: modalScale 0.25s ease-out;
+      overflow: hidden;
+    }
+
+    @keyframes modalScale {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    /* ==========================================================================
+       4. DASHBOARD VIEW STYLES
+       ========================================================================== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* Focus Now Banner Card */
+    .focus-now-card {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.1));
+      border: 1px solid var(--border-focus);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .focus-now-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.2), transparent 70%);
+      pointer-events: none;
+    }
+
+    .focus-score-pill {
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid var(--accent-purple);
+      color: var(--accent-lavender);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       5. TASK MANAGEMENT VIEW
+       ========================================================================== */
+    .task-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      flex: 1;
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 240px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-box input {
+      padding-left: 2.5rem;
+    }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .task-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .task-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .task-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .task-title.completed {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .task-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .subtask-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .subtask-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .subtask-item input[type="checkbox"] {
+      accent-color: var(--accent-purple);
+    }
+
+    /* ==========================================================================
+       6. FOCUS MODE TIMER
+       ========================================================================== */
+    .timer-container {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .timer-circle {
+      width: 280px;
+      height: 280px;
+      border-radius: var(--radius-full);
+      background: radial-gradient(circle, var(--bg-card) 60%, transparent 100%);
+      border: 4px solid var(--border-color);
+      box-shadow: 0 0 50px rgba(139, 92, 246, 0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem 0;
+      position: relative;
+    }
+
+    .timer-display {
+      font-size: 4rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ==========================================================================
+       7. CALENDAR VIEW
+       ========================================================================== */
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+    }
+
+    .calendar-day-head {
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      padding: 0.5rem;
+    }
+
+    .calendar-day {
+      min-height: 100px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+
+    .calendar-day-num {
+      font-weight: 600;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .calendar-day.today {
+      border-color: var(--accent-purple);
+      background: rgba(139, 92, 246, 0.05);
+    }
+
+    .calendar-day.today .calendar-day-num {
+      color: var(--accent-lavender);
+    }
+
+    .calendar-event {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ==========================================================================
+       8. ANALYTICS & ACHIEVEMENTS & MOOD
+       ========================================================================== */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* CSS Bar Chart Simulation */
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 180px;
+      padding-top: 1rem;
+      gap: 0.5rem;
+    }
+
+    .chart-bar-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+
+    .chart-bar {
+      width: 100%;
+      max-width: 32px;
+      background: linear-gradient(to top, var(--accent-purple), var(--accent-lavender));
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      transition: height 0.5s ease;
+    }
+
+    .chart-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Achievements Grid */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .achievement-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      opacity: 0.5;
+      filter: grayscale(1);
+      transition: all var(--transition-fast);
+    }
+
+    .achievement-card.unlocked {
+      opacity: 1;
+      filter: grayscale(0);
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    .achievement-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--accent-lavender);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    /* Mood Tracker */
+    .mood-selector {
+      display: flex;
+      justify-content: space-around;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .mood-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      cursor: pointer;
+      flex: 1;
+      transition: all var(--transition-fast);
+    }
+
+    .mood-btn:hover, .mood-btn.selected {
+      border-color: var(--accent-purple);
+      background: rgba(139, 92, 246, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .mood-btn i {
+      font-size: 1.75rem;
+    }
+
+    /* Empty State Component */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--text-subtle);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.375rem;
+    }
+
+    .empty-state p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      max-width: 320px;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ==========================================================================
+       9. RESPONSIVE BREAKPOINTS
+       ========================================================================== */
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-wrapper {
+        margin-left: 0;
+      }
+      .menu-toggle {
+        display: block;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content-area {
+        padding: 1.25rem;
+      }
+      .top-header {
+        padding: 0 1.25rem;
+      }
+      .task-controls {
+        flex-direction: column;
+      }
+      .search-box {
+        width: 100%;
+      }
+      .timer-circle {
+        width: 220px;
+        height: 220px;
+      }
+      .timer-display {
+        font-size: 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+     AUTHENTICATION SCREEN
+     ========================================================================== -->
+  <div id="auth-screen">
+    <div class="auth-container">
+      <div class="auth-left">
+        <div class="auth-brand">
+          <i class="fa-solid fa-bolt-lightning"></i>
+          <h1>FocusFlow</h1>
+        </div>
+        <p class="auth-tagline">Plan less. Focus better. Get things done.</p>
+
+        <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+          <div class="form-group hidden" id="group-name">
+            <label for="auth-name">Full Name</label>
+            <input type="text" id="auth-name" class="input-control" placeholder="e.g. Alex Morgan">
+          </div>
+
+          <div class="form-group">
+            <label for="auth-email">Email Address</label>
+            <input type="email" id="auth-email" class="input-control" placeholder="student@university.edu" required>
+          </div>
+
+          <div class="form-group">
+            <label for="auth-password">Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="auth-password" class="input-control" placeholder="••••••••" required>
+              <i class="fa-solid fa-eye toggle-pw" onclick="togglePasswordVisibility('auth-password', this)"></i>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between" style="margin-bottom: 1.5rem;">
+            <label class="flex items-center gap-2" style="font-size: 0.8125rem; color: var(--text-muted); cursor: pointer;">
+              <input type="checkbox" checked style="accent-color: var(--accent-purple);"> Remember me
+            </label>
+            <a href="#" style="font-size: 0.8125rem; color: var(--accent-lavender); text-decoration: none;">Forgot?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;" id="auth-submit-btn">
+            Sign In to Dashboard
+          </button>
+        </form>
+
+        <p style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--text-muted);">
+          <span id="auth-toggle-text">Don't have an account?</span>
+          <a href="#" id="auth-toggle-btn" onclick="toggleAuthMode(event)" style="color: var(--accent-lavender); font-weight: 600; text-decoration: none;">Sign Up</a>
+        </p>
+      </div>
+
+      <div class="auth-right">
+        <div class="auth-illustration">
+          <i class="fa-solid fa-brain"></i>
+        </div>
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Smart Student Productivity</h3>
+        <p style="font-size: 0.875rem; color: var(--text-muted); max-width: 280px;">
+          Prioritize tasks effortlessly with our algorithmic Focus Score and Gamified XP rewards.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+     MAIN APPLICATION LAYOUT
+     ========================================================================== -->
+  <div id="app-container" class="hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-bolt-lightning"></i>
+        <h2>FocusFlow</h2>
+      </div>
+
+      <ul class="nav-list">
+        <li class="nav-item active" data-view="dashboard">
+          <a href="#"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        </li>
+        <li class="nav-item" data-view="tasks">
+          <a href="#"><i class="fa-solid fa-list-check"></i> My Tasks</a>
+        </li>
+        <li class="nav-item" data-view="focus">
+          <a href="#"><i class="fa-solid fa-stopwatch"></i> Focus Mode</a>
+        </li>
+        <li class="nav-item" data-view="calendar">
+          <a href="#"><i class="fa-regular fa-calendar-days"></i> Calendar</a>
+        </li>
+        <li class="nav-item" data-view="analytics">
+          <a href="#"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+        </li>
+        <li class="nav-item" data-view="achievements">
+          <a href="#"><i class="fa-solid fa-trophy"></i> Achievements</a>
+        </li>
+        <li class="nav-item" data-view="mood">
+          <a href="#"><i class="fa-regular fa-face-smile"></i> Mood Log</a>
+        </li>
+        <li class="nav-item" data-view="profile">
+          <a href="#"><i class="fa-regular fa-user"></i> Profile</a>
+        </li>
+      </ul>
+
+      <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+        <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start;" onclick="handleLogout()">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="flex items-center gap-3">
+          <button class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div>
+            <h3 id="greeting-title" style="font-size: 1rem; font-weight: 700;">Good morning, Alex</h3>
+            <p id="current-date" style="font-size: 0.75rem; color: var(--text-muted);">Friday, Sep 18, 2026</p>
+          </div>
+        </div>
+
+        <div class="header-user">
+          <button class="btn-icon" onclick="showToast('No new notifications', 'info')">
+            <i class="fa-regular fa-bell" style="font-size: 1.1rem;"></i>
+          </button>
+          <div class="avatar" id="user-avatar-top">AM</div>
+        </div>
+      </header>
+
+      <!-- View Area -->
+      <main class="content-area">
+
+        <!-- 1. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-panel">
+          <div class="page-title">Dashboard Overview</div>
+          <div class="page-subtitle">Here's your productivity breakdown for today.</div>
+
+          <!-- Stats Cards Grid -->
+          <div class="stats-grid">
+            <div class="card stat-card">
+              <div class="stat-icon" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-lavender);">
+                <i class="fa-solid fa-list-check"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="stat-total-tasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+              </div>
+            </div>
+
+            <div class="card stat-card">
+              <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-green);">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="stat-completed-tasks">0</div>
+                <div class="stat-label">Completed</div>
+              </div>
+            </div>
+
+            <div class="card stat-card">
+              <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);">
+                <i class="fa-solid fa-fire"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="stat-streak">3 Days</div>
+                <div class="stat-label">Current Streak</div>
+              </div>
+            </div>
+
+            <div class="card stat-card">
+              <div class="stat-icon" style="background: rgba(236, 72, 153, 0.15); color: var(--accent-pink);">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="stat-level">Lvl 2</div>
+                <div class="stat-label" id="stat-xp">145 XP</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FOCUS NOW PROMINENT CARD -->
+          <div class="card focus-now-card" id="focus-now-container">
+            <!-- Dynamically populated via JS -->
+          </div>
+
+          <!-- Recent Tasks Preview Table/List -->
+          <div class="card">
+            <div class="flex items-center justify-between" style="margin-bottom: 1rem;">
+              <h3 style="font-size: 1.1rem; font-weight: 700;">Urgent Tasks</h3>
+              <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;" onclick="switchView('tasks')">View All</button>
+            </div>
+            <div id="dashboard-task-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. MY TASKS VIEW -->
+        <section id="view-tasks" class="view-panel hidden">
+          <div class="flex items-center justify-between" style="margin-bottom: 1.5rem;">
+            <div>
+              <div class="page-title">Task Management</div>
+              <div class="page-subtitle" style="margin-bottom:0;">Organize and track your academic assignments.</div>
+            </div>
+            <button class="btn btn-primary" onclick="openTaskModal()"><i class="fa-solid fa-plus"></i> Add Task</button>
+          </div>
+
+          <!-- Controls Bar -->
+          <div class="task-controls">
+            <div class="search-filter-group">
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="task-search-input" class="input-control" placeholder="Search tasks..." oninput="renderTasks()">
+              </div>
+
+              <select id="filter-category" class="input-control" style="width: auto;" onchange="renderTasks()">
+                <option value="All">All Categories</option>
+                <option value="Assignment">Assignment</option>
+                <option value="Coding">Coding</option>
+                <option value="Exam">Exam</option>
+                <option value="Project">Project</option>
+                <option value="Personal">Personal</option>
+              </select>
+
+              <select id="filter-priority" class="input-control" style="width: auto;" onchange="renderTasks()">
+                <option value="All">All Priorities</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+
+              <select id="filter-status" class="input-control" style="width: auto;" onchange="renderTasks()">
+                <option value="All">All Statuses</option>
+                <option value="Todo">Todo</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Task Cards Grid -->
+          <div class="task-grid" id="main-task-grid">
+            <!-- Rendered via JS -->
+          </div>
+        </section>
+
+        <!-- 3. FOCUS MODE VIEW -->
+        <section id="view-focus" class="view-panel hidden">
+          <div class="page-title" style="text-align: center;">Focus Session</div>
+          <div class="page-subtitle" style="text-align: center;">Eliminate distractions with timed Pomodoro focus intervals.</div>
+
+          <div class="card timer-container">
+            <span class="badge badge-purple" id="timer-task-label">General Deep Work</span>
+
+            <div class="timer-circle">
+              <div class="timer-display" id="timer-display">25:00</div>
+              <span style="font-size: 0.8125rem; color: var(--text-muted);" id="timer-status-text">Ready to Start</span>
+            </div>
+
+            <div class="flex gap-3" style="margin-bottom: 2rem;">
+              <button class="btn btn-primary" id="timer-start-btn" onclick="toggleTimer()">
+                <i class="fa-solid fa-play"></i> Start
+              </button>
+              <button class="btn btn-secondary" onclick="resetTimer()">
+                <i class="fa-solid fa-rotate-right"></i> Reset
+              </button>
+            </div>
+
+            <div style="display: flex; gap: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; width: 100%; justify-content: center;">
+              <div>
+                <div style="font-size: 1.25rem; font-weight: 700;" id="focus-completed-count">2</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Sessions Done</div>
+              </div>
+              <div style="border-left: 1px solid var(--border-color);"></div>
+              <div>
+                <div style="font-size: 1.25rem; font-weight: 700;" id="focus-total-minutes">50m</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Focus Minutes</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. CALENDAR VIEW -->
+        <section id="view-calendar" class="view-panel hidden">
+          <div class="calendar-header">
+            <div>
+              <div class="page-title">September 2026</div>
+              <div class="page-subtitle" style="margin-bottom: 0;">Deadlines and scheduled task items.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="calendar-grid" id="calendar-days-container">
+              <!-- Grid Header -->
+              <div class="calendar-day-head">Sun</div>
+              <div class="calendar-day-head">Mon</div>
+              <div class="calendar-day-head">Tue</div>
+              <div class="calendar-day-head">Wed</div>
+              <div class="calendar-day-head">Thu</div>
+              <div class="calendar-day-head">Fri</div>
+              <div class="calendar-day-head">Sat</div>
+              <!-- Dynamically Populated Days via JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. ANALYTICS VIEW -->
+        <section id="view-analytics" class="view-panel hidden">
+          <div class="page-title">Productivity Analytics</div>
+          <div class="page-subtitle">Track your efficiency and focus metrics over time.</div>
+
+          <div class="analytics-grid">
+            <div class="card">
+              <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem;">Weekly Focus Minutes</h3>
+              <div class="bar-chart">
+                <div class="chart-bar-container"><div class="chart-bar" style="height: 40%;"></div><span class="chart-label">M</span></div>
+                <div class="chart-bar-container"><div class="chart-bar" style="height: 65%;"></div><span class="chart-label">T</span></div>
+                <div class="chart-bar-container"><div class="chart-bar" style="height: 30%;"></div><span class="chart-label">W</span></div>
+                <div class="chart-bar-container"><div class="chart-bar" style="height: 85%;"></div><span class="chart-label">T</span></div>
+                <div class="chart-bar-container"><div class="chart-bar" style="height: 100%;"></div><span class="chart-label">F</span></div>
+                <div class="chart-bar-container"><div class="chart-bar" style="height: 20%;"></div><span class="chart-label">S</span></div>
+                <div class="chart-bar-container"><div class="chart-bar" style="height: 10%;"></div><span class="chart-label">S</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem;">Level & XP Progress</h3>
+              <div style="margin-bottom: 1.5rem;">
+                <div class="flex justify-between" style="font-size: 0.875rem; margin-bottom: 0.5rem;">
+                  <span>Current Level: <strong>Lvl 2</strong></span>
+                  <span style="color: var(--text-muted);">145 / 200 XP</span>
+                </div>
+                <div style="height: 8px; background: rgba(255,255,255,0.08); border-radius: var(--radius-full); overflow: hidden;">
+                  <div style="width: 72.5%; height: 100%; background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));"></div>
+                </div>
+              </div>
+              <p style="font-size: 0.8125rem; color: var(--text-muted);">Complete tasks and focus sessions to unlock Level 3!</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. ACHIEVEMENTS VIEW -->
+        <section id="view-achievements" class="view-panel hidden">
+          <div class="page-title">Achievements & Milestones</div>
+          <div class="page-subtitle">Earn badges as you maintain consistency and complete tasks.</div>
+
+          <div class="achievements-grid" id="achievements-container">
+            <!-- Rendered via JS -->
+          </div>
+        </section>
+
+        <!-- 7. MOOD VIEW -->
+        <section id="view-mood" class="view-panel hidden">
+          <div class="page-title">Daily Mood & Energy Log</div>
+          <div class="page-subtitle">Record how you feel to correlate energy levels with task completion.</div>
+
+          <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h3 style="font-size: 1.1rem; text-align: center;">How are you feeling today?</h3>
+            <div class="mood-selector">
+              <div class="mood-btn" onclick="selectMood('Energized', this)">
+                <i class="fa-solid fa-bolt" style="color: var(--accent-amber);"></i>
+                <span style="font-size: 0.75rem;">Energized</span>
+              </div>
+              <div class="mood-btn selected" onclick="selectMood('Focused', this)">
+                <i class="fa-solid fa-bullseye" style="color: var(--accent-purple);"></i>
+                <span style="font-size: 0.75rem;">Focused</span>
+              </div>
+              <div class="mood-btn" onclick="selectMood('Calm', this)">
+                <i class="fa-solid fa-wind" style="color: var(--accent-cyan);"></i>
+                <span style="font-size: 0.75rem;">Calm</span>
+              </div>
+              <div class="mood-btn" onclick="selectMood('Tired', this)">
+                <i class="fa-solid fa-moon" style="color: var(--text-muted);"></i>
+                <span style="font-size: 0.75rem;">Tired</span>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="saveMood()">Save Mood Log</button>
+          </div>
+        </section>
+
+        <!-- 8. PROFILE VIEW -->
+        <section id="view-profile" class="view-panel hidden">
+          <div class="page-title">User Profile</div>
+          <div class="page-subtitle">Manage your student credentials and view account summary.</div>
+
+          <div class="card" style="max-width: 500px;">
+            <div class="flex items-center gap-3" style="margin-bottom: 1.5rem;">
+              <div class="avatar" style="width: 64px; height: 64px; font-size: 1.5rem;" id="user-avatar-profile">AM</div>
+              <div>
+                <h3 id="profile-name" style="font-size: 1.25rem; font-weight: 700;">User</h3>
+                <p id="profile-email" style="font-size: 0.875rem; color: var(--text-muted);">user@email.com</p>
+              </div>
+            </div>
+
+            <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+              <div class="flex justify-between" style="padding: 0.5rem 0; font-size: 0.875rem;">
+                <span style="color: var(--text-muted);">Account Level</span>
+                <span style="font-weight: 600;">Level 2</span>
+              </div>
+              <div class="flex justify-between" style="padding: 0.5rem 0; font-size: 0.875rem;">
+                <span style="color: var(--text-muted);">Total XP Earned</span>
+                <span style="font-weight: 600;">145 XP</span>
+              </div>
+              <div class="flex justify-between" style="padding: 0.5rem 0; font-size: 0.875rem;">
+                <span style="color: var(--text-muted);">Member Since</span>
+                <span style="font-weight: 600;">September 2026</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+     MODALS & TOAST CONTAINERS
+     ========================================================================== -->
+  <!-- Add/Edit Task Modal -->
+  <div class="modal-overlay hidden" id="task-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="font-size: 1.1rem; font-weight: 700;" id="modal-task-title">Add New Task</h3>
+        <button class="btn-icon" onclick="closeTaskModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="task-form">
+          <input type="hidden" id="task-edit-id">
+
+          <div class="form-group">
+            <label for="task-title-input">Task Title *</label>
+            <input type="text" id="task-title-input" class="input-control" placeholder="e.g. Complete Operating Systems Lab 3" required>
+          </div>
+
+          <div class="form-group">
+            <label for="task-desc-input">Description</label>
+            <textarea id="task-desc-input" class="input-control" rows="3" placeholder="Additional details..."></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="task-category-input">Category</label>
+              <select id="task-category-input" class="input-control">
+                <option value="Assignment">Assignment</option>
+                <option value="Coding">Coding</option>
+                <option value="Exam">Exam</option>
+                <option value="Project">Project</option>
+                <option value="Personal">Personal</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="task-priority-input">Priority</label>
+              <select id="task-priority-input" class="input-control">
+                <option value="High">High</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="task-date-input">Due Date</label>
+              <input type="date" id="task-date-input" class="input-control">
+            </div>
+
+            <div class="form-group">
+              <label for="task-time-input">Est. Minutes</label>
+              <input type="number" id="task-time-input" class="input-control" value="30" min="5" step="5">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeTaskModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveTask()">Save Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- ==========================================================================
+     APPLICATION LOGIC & SCRIPT
+     ========================================================================== -->
+  <script>
+    /* ================================================================
+       FOCUSFLOW - FRONTEND/BACKEND INTEGRATION
+       Backend: http://localhost:5000/api
+       ================================================================ */
+    const API_BASE_URL = 'http://localhost:5000/api';
+    const TOKEN_KEY = 'focusflow_token';
+
+    let currentUser = null;
+    let activeView = 'dashboard';
+    let tasks = [];
+    let selectedMood = 'Focused';
+    let timerInterval = null;
+    let timerSeconds = 25 * 60;
+    let isTimerRunning = false;
+    let activeFocusSessionId = null;
+    let activeFocusTaskId = null;
+    let currentCalendarDate = new Date();
+
+    /* ---------------- API HELPER ---------------- */
+    async function apiRequest(endpoint, method = 'GET', body = null) {
+      const headers = { 'Content-Type': 'application/json' };
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      const config = { method, headers };
+      if (body !== null) config.body = JSON.stringify(body);
+
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+      let result = {};
+      try { result = await response.json(); } catch (_) {}
+
+      if (response.status === 401) {
+        handleLogout(false);
+        throw new Error('Your session expired. Please sign in again.');
+      }
+      if (!response.ok || result.success === false) {
+        throw new Error(result.message || 'Request failed');
+      }
+
+      // Backend responses are { success: true, data: ... } for most endpoints.
+      return Object.prototype.hasOwnProperty.call(result, 'data') ? result.data : result;
+    }
+
+    async function checkBackendHealth() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        return response.ok;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    /* ---------------- AUTHENTICATION ---------------- */
+    let isSignUp = false;
+
+    function toggleAuthMode(e) {
+      e.preventDefault();
+      isSignUp = !isSignUp;
+      document.getElementById('group-name').classList.toggle('hidden', !isSignUp);
+      document.getElementById('auth-submit-btn').textContent = isSignUp ? 'Create Account' : 'Sign In to Dashboard';
+      document.getElementById('auth-toggle-text').textContent = isSignUp ? 'Already have an account?' : "Don't have an account?";
+      document.getElementById('auth-toggle-btn').textContent = isSignUp ? 'Sign In' : 'Sign Up';
+    }
+
+    function togglePasswordVisibility(id, icon) {
+      const input = document.getElementById(id);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const name = document.getElementById('auth-name').value.trim();
+
+      if (!email || !password) {
+        showToast('Please enter email and password', 'error');
+        return;
+      }
+
+      if (isSignUp && !name) {
+        showToast('Please enter your name', 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById('auth-submit-btn');
+      submitBtn.disabled = true;
+
+      try {
+        const endpoint = isSignUp ? '/auth/register' : '/auth/login';
+        const body = isSignUp ? { name, email, password } : { email, password };
+        const result = await apiRequest(endpoint, 'POST', body);
+
+        if (isSignUp) {
+          showToast('Account created. Please sign in.', 'success');
+          document.getElementById('auth-email').value = email;
+          document.getElementById('auth-password').value = '';
+          toggleAuthMode({ preventDefault() {} });
+          return;
+        }
+
+        const token = result.token;
+        if (!token) throw new Error('Login succeeded but no authentication token was returned.');
+        localStorage.setItem(TOKEN_KEY, token);
+        await startAuthenticatedApp();
+        showToast(`Welcome back, ${currentUser.name}!`, 'success');
+      } catch (error) {
+        console.error('Authentication error:', error);
+        showToast(error.message || 'Authentication failed', 'error');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    }
+
+    async function startAuthenticatedApp() {
+      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('app-container').classList.remove('hidden');
+
+      await loadUserData();
+      await loadDashboardData();
+      await loadTasks();
+      updateCurrentDate();
+      initNavigation();
+    }
+
+    async function loadUserData() {
+      currentUser = await apiRequest('/auth/me');
+
+      const firstName = (currentUser.name || 'User').split(' ')[0];
+      const initials = (currentUser.name || 'User')
+        .split(' ')
+        .filter(Boolean)
+        .map(part => part[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase();
+
+      document.getElementById('user-avatar-top').textContent = initials;
+      document.getElementById('user-avatar-profile').textContent = initials;
+      document.getElementById('greeting-title').textContent = `Good day, ${firstName}`;
+      document.getElementById('profile-name').textContent = currentUser.name;
+      document.getElementById('profile-email').textContent = currentUser.email;
+
+      const profileLevel = document.querySelector('#view-profile .flex.justify-between:nth-of-type(1) span:last-child');
+      const profileXp = document.querySelector('#view-profile .flex.justify-between:nth-of-type(2) span:last-child');
+      const profileCreated = document.querySelector('#view-profile .flex.justify-between:nth-of-type(3) span:last-child');
+      if (profileLevel) profileLevel.textContent = `Level ${currentUser.level || 1}`;
+      if (profileXp) profileXp.textContent = `${currentUser.xp || 0} XP`;
+      if (profileCreated && currentUser.created_at) profileCreated.textContent = new Date(currentUser.created_at).toLocaleDateString();
+    }
+
+    function handleLogout(showMessage = true) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      isTimerRunning = false;
+      activeFocusSessionId = null;
+      activeFocusTaskId = null;
+      currentUser = null;
+      tasks = [];
+      localStorage.removeItem(TOKEN_KEY);
+
+      document.getElementById('app-container').classList.add('hidden');
+      document.getElementById('auth-screen').classList.remove('hidden');
+      if (showMessage) showToast('Logged out successfully', 'info');
+    }
+
+    /* ---------------- NAVIGATION ---------------- */
+    function initNavigation() {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.onclick = (e) => {
+          e.preventDefault();
+          switchView(item.getAttribute('data-view'));
+        };
+      });
+    }
+
+    function switchView(viewName) {
+      activeView = viewName;
+      document.querySelectorAll('.nav-item').forEach(nav => {
+        nav.classList.toggle('active', nav.getAttribute('data-view') === viewName);
+      });
+      document.querySelectorAll('.view-panel').forEach(panel => panel.classList.add('hidden'));
+      const panel = document.getElementById(`view-${viewName}`);
+      if (panel) panel.classList.remove('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+
+      if (viewName === 'dashboard') loadDashboardData();
+      if (viewName === 'tasks') renderTasks();
+      if (viewName === 'focus') loadFocusStats();
+      if (viewName === 'calendar') renderCalendar();
+      if (viewName === 'analytics') loadAnalytics();
+      if (viewName === 'achievements') loadAchievements();
+      if (viewName === 'mood') loadMoodHistory();
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function updateCurrentDate() {
+      const el = document.getElementById('current-date');
+      if (el) el.textContent = new Date().toLocaleDateString(undefined, {
+        weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
+      });
+    }
+
+    /* ---------------- TASKS ---------------- */
+    function normalizeTask(t) {
+      const rawDue = t.due_date ?? t.dueDate ?? null;
+      let dueDate = '';
+      if (rawDue) {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(String(rawDue))) {
+          dueDate = String(rawDue);
+        } else {
+          const d = new Date(rawDue);
+          if (!Number.isNaN(d.getTime())) {
+            dueDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+          }
+        }
+      }
+      return {
+        ...t,
+        id: Number(t.id),
+        title: t.title || '',
+        description: t.description || '',
+        category: t.category || 'Personal',
+        priority: t.priority || 'Medium',
+        status: t.status || 'Todo',
+        dueDate,
+        estimatedMinutes: Number(t.estimated_minutes ?? t.estimatedMinutes ?? 30),
+        energyLevel: t.energy_level ?? t.energyLevel ?? 'Medium'
+      };
+    }
+
+    async function loadTasks() {
+      tasks = (await apiRequest('/tasks')).map(normalizeTask);
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const searchEl = document.getElementById('task-search-input');
+      const catEl = document.getElementById('filter-category');
+      const prioEl = document.getElementById('filter-priority');
+      const statusEl = document.getElementById('filter-status');
+      const grid = document.getElementById('main-task-grid');
+      if (!grid || !searchEl || !catEl || !prioEl || !statusEl) return;
+
+      const search = searchEl.value.toLowerCase().trim();
+      const cat = catEl.value;
+      const prio = prioEl.value;
+      const status = statusEl.value;
+
+      const filtered = tasks.filter(t => {
+        const matchesSearch = t.title.toLowerCase().includes(search) || t.description.toLowerCase().includes(search);
+        return matchesSearch && (cat === 'All' || t.category === cat) && (prio === 'All' || t.priority === prio) && (status === 'All' || t.status === status);
+      });
+
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="card empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-folder-open"></i><h3>No Tasks Found</h3><p>Create a task and it will be saved to your FocusFlow account.</p><button class="btn btn-primary" onclick="openTaskModal()"><i class="fa-solid fa-plus"></i> Add Task</button></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(t => `
+        <div class="card task-item">
+          <div>
+            <div class="task-header">
+              <span class="task-title ${t.status === 'Completed' ? 'completed' : ''}">${escapeHtml(t.title)}</span>
+              <span class="badge ${t.priority === 'High' ? 'badge-red' : t.priority === 'Medium' ? 'badge-amber' : 'badge-green'}">${escapeHtml(t.priority)}</span>
+            </div>
+            <p style="font-size:.8125rem;color:var(--text-muted);margin-bottom:1rem;">${escapeHtml(t.description || 'No description provided.')}</p>
+            <div class="task-meta">
+              <span class="badge badge-purple">${escapeHtml(t.category)}</span>
+              <span class="badge badge-pink">${escapeHtml(t.status)}</span>
+              ${t.dueDate ? `<span class="badge badge-amber"><i class="fa-regular fa-calendar"></i> ${t.dueDate}</span>` : ''}
+              <span class="badge badge-purple"><i class="fa-regular fa-clock"></i> ${t.estimatedMinutes} min</span>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--border-color);padding-top:.75rem;display:flex;justify-content:space-between;align-items:center;gap:.5rem;">
+            <button class="btn btn-secondary" style="padding:.35rem .65rem;font-size:.75rem;" onclick="toggleTaskComplete(${t.id}, '${t.status}')">
+              <i class="fa-solid fa-check"></i> ${t.status === 'Completed' ? 'Mark Pending' : 'Mark Done'}
+            </button>
+            <div class="flex gap-1">
+              <button class="btn-icon" title="Edit" onclick="openTaskModal(${t.id})"><i class="fa-regular fa-pen-to-square"></i></button>
+              <button class="btn-icon" title="Delete" style="color:var(--accent-red);" onclick="deleteTask(${t.id})"><i class="fa-regular fa-trash-can"></i></button>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    function openTaskModal(taskId = null) {
+      const form = document.getElementById('task-form');
+      form.reset();
+      const task = taskId ? tasks.find(t => t.id === Number(taskId)) : null;
+      document.getElementById('modal-task-title').textContent = task ? 'Edit Task' : 'Add New Task';
+      document.getElementById('task-edit-id').value = task ? task.id : '';
+      if (task) {
+        document.getElementById('task-title-input').value = task.title;
+        document.getElementById('task-desc-input').value = task.description;
+        document.getElementById('task-category-input').value = task.category;
+        document.getElementById('task-priority-input').value = task.priority;
+        document.getElementById('task-date-input').value = task.dueDate;
+        document.getElementById('task-time-input').value = task.estimatedMinutes;
+      }
+      document.getElementById('task-modal').classList.remove('hidden');
+    }
+
+    function closeTaskModal() {
+      document.getElementById('task-modal').classList.add('hidden');
+    }
+
+    async function saveTask() {
+      const editId = document.getElementById('task-edit-id').value;
+      const title = document.getElementById('task-title-input').value.trim();
+      if (!title) return showToast('Please enter a task title', 'error');
+
+      const existing = editId ? tasks.find(t => t.id === Number(editId)) : null;
+      const payload = {
+        title,
+        description: document.getElementById('task-desc-input').value.trim(),
+        category: document.getElementById('task-category-input').value,
+        priority: document.getElementById('task-priority-input').value,
+        dueDate: document.getElementById('task-date-input').value || null,
+        estimatedMinutes: Number(document.getElementById('task-time-input').value) || 30,
+        status: existing ? existing.status : 'Todo',
+        energyLevel: existing ? existing.energyLevel : 'Medium'
+      };
+
+      try {
+        if (editId) {
+          await apiRequest(`/tasks/${editId}`, 'PUT', payload);
+          showToast('Task updated successfully!', 'success');
+        } else {
+          await apiRequest('/tasks', 'POST', payload);
+          showToast('Task created successfully!', 'success');
+        }
+        closeTaskModal();
+        await loadTasks();
+        await loadDashboardData();
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+
+    async function deleteTask(id) {
+      if (!confirm('Delete this task permanently?')) return;
+      try {
+        await apiRequest(`/tasks/${id}`, 'DELETE');
+        showToast('Task deleted', 'info');
+        await loadTasks();
+        await loadDashboardData();
+      } catch (error) { showToast(error.message, 'error'); }
+    }
+
+    async function toggleTaskComplete(id, currentStatus) {
+      try {
+        if (currentStatus === 'Completed') {
+          await apiRequest(`/tasks/${id}`, 'PUT', { status: 'Todo' });
+        } else {
+          await apiRequest(`/tasks/${id}/complete`, 'PATCH');
+        }
+        await loadTasks();
+        await loadDashboardData();
+        await loadUserData();
+        showToast(currentStatus === 'Completed' ? 'Task marked as pending' : 'Task completed! XP awarded.', 'success');
+      } catch (error) { showToast(error.message, 'error'); }
+    }
+
+    /* ---------------- DASHBOARD ---------------- */
+    async function loadDashboardData() {
+      try {
+        const data = await apiRequest('/analytics/dashboard');
+        document.getElementById('stat-total-tasks').textContent = data.totalTasks || 0;
+        document.getElementById('stat-completed-tasks').textContent = data.completedTasks || 0;
+        document.getElementById('stat-streak').textContent = `${data.currentStreak || 0} Days`;
+        document.getElementById('stat-level').textContent = `Lvl ${data.level || currentUser?.level || 1}`;
+        document.getElementById('stat-xp').textContent = `${data.xp || currentUser?.xp || 0} XP`;
+        await loadFocusNow();
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+
+    async function loadFocusNow() {
+      const container = document.getElementById('focus-now-container');
+      try {
+        const result = await apiRequest('/tasks/focus-now');
+        if (!result || !result.task) {
+          container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-circle-check" style="color:var(--accent-green);"></i><h3>All Caught Up!</h3><p>No pending task needs your attention right now.</p></div>`;
+          return;
+        }
+        const t = normalizeTask(result.task);
+        const score = result.focusScore ?? result.score ?? 0;
+        container.innerHTML = `
+          <div class="flex justify-between items-center" style="margin-bottom:1rem;gap:.75rem;flex-wrap:wrap;">
+            <span class="badge badge-purple"><i class="fa-solid fa-sparkles"></i> Smart Recommendation</span>
+            <span class="focus-score-pill">Focus Score: ${score}/100</span>
+          </div>
+          <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:.5rem;">${escapeHtml(t.title)}</h2>
+          <p style="font-size:.875rem;color:var(--text-muted);margin-bottom:1.25rem;">${escapeHtml(result.reason || t.description || 'Recommended by FocusFlow.')}</p>
+          <div class="flex items-center gap-2" style="margin-bottom:1.5rem;flex-wrap:wrap;">
+            <span class="badge badge-pink">${escapeHtml(t.category)}</span>
+            <span class="badge badge-amber"><i class="fa-regular fa-clock"></i> ${t.estimatedMinutes} mins</span>
+            <span class="badge badge-red">Due: ${t.dueDate || 'No date'}</span>
+          </div>
+          <div class="flex gap-2" style="flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="startFocusOnTask(${t.id})"><i class="fa-solid fa-play"></i> Start Focus Session</button>
+            <button class="btn btn-secondary" onclick="switchView('tasks')">View Tasks</button>
+          </div>`;
+      } catch (_) {
+        container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-bolt"></i><h3>Focus Engine Ready</h3><p>Create a task to receive a smart focus recommendation.</p></div>`;
+      }
+
+      const listContainer = document.getElementById('dashboard-task-list');
+      const pending = tasks.filter(t => t.status !== 'Completed').slice(0, 3);
+      if (!pending.length) {
+        listContainer.innerHTML = `<div class="empty-state" style="padding:2rem 1rem;"><i class="fa-solid fa-check"></i><p>No pending tasks.</p></div>`;
+      } else {
+        listContainer.innerHTML = pending.map(t => `
+          <div class="flex items-center justify-between" style="padding:.75rem 0;border-bottom:1px solid var(--border-color);gap:.75rem;">
+            <div class="flex items-center gap-3" style="min-width:0;">
+              <input type="checkbox" onchange="toggleTaskComplete(${t.id}, '${t.status}')">
+              <div style="min-width:0;"><div style="font-size:.875rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(t.title)}</div><div style="font-size:.75rem;color:var(--text-muted);">${escapeHtml(t.category)} • ${t.dueDate || 'No Date'}</div></div>
+            </div>
+            <span class="badge ${t.priority === 'High' ? 'badge-red' : t.priority === 'Medium' ? 'badge-amber' : 'badge-green'}">${t.priority}</span>
+          </div>`).join('');
+      }
+    }
+
+    /* ---------------- FOCUS MODE ---------------- */
+    async function loadFocusStats() {
+      try {
+        const stats = await apiRequest('/focus/stats');
+        document.getElementById('focus-completed-count').textContent = stats.totalSessions || 0;
+        document.getElementById('focus-total-minutes').textContent = `${stats.totalMinutes || 0}m`;
+      } catch (error) { showToast(error.message, 'error'); }
+    }
+
+    async function startFocusOnTask(taskId) {
+      const task = tasks.find(t => t.id === Number(taskId));
+      if (!task) return;
+      activeFocusTaskId = task.id;
+      document.getElementById('timer-task-label').textContent = task.title;
+      switchView('focus');
+      resetTimer();
+      await startTimer();
+    }
+
+    async function startTimer() {
+      if (isTimerRunning) return;
+      try {
+        const result = await apiRequest('/focus/start', 'POST', { taskId: activeFocusTaskId });
+        activeFocusSessionId = result.session_id ?? result.sessionId ?? result.id ?? null;
+        if (!activeFocusSessionId) throw new Error('Focus session could not be started.');
+
+        isTimerRunning = true;
+        document.getElementById('timer-start-btn').innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+        document.getElementById('timer-status-text').textContent = 'Focusing...';
+        timerInterval = setInterval(() => {
+          if (timerSeconds > 0) {
+            timerSeconds--;
+            updateTimerDisplay();
+          } else {
+            completeTimer();
+          }
+        }, 1000);
+      } catch (error) { showToast(error.message, 'error'); }
+    }
+
+    async function toggleTimer() {
+      if (isTimerRunning) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        isTimerRunning = false;
+        document.getElementById('timer-start-btn').innerHTML = '<i class="fa-solid fa-play"></i> Resume';
+        document.getElementById('timer-status-text').textContent = 'Paused';
+      } else {
+        await startTimer();
+      }
+    }
+
+    async function completeTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      isTimerRunning = false;
+      if (!activeFocusSessionId) return resetTimer();
+      try {
+        await apiRequest('/focus/complete', 'POST', {
+          sessionId: activeFocusSessionId,
+          durationMinutes: 25
+        });
+        showToast('Focus session completed! XP awarded.', 'success');
+        await loadFocusStats();
+        await loadUserData();
+        await loadDashboardData();
+      } catch (error) { showToast(error.message, 'error'); }
+      activeFocusSessionId = null;
+      resetTimer();
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      isTimerRunning = false;
+      timerSeconds = 25 * 60;
+      updateTimerDisplay();
+      document.getElementById('timer-start-btn').innerHTML = '<i class="fa-solid fa-play"></i> Start';
+      document.getElementById('timer-status-text').textContent = 'Ready to Start';
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timerSeconds / 60);
+      const secs = timerSeconds % 60;
+      document.getElementById('timer-display').textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+    }
+
+    /* ---------------- CALENDAR ---------------- */
+    function renderCalendar() {
+      const container = document.getElementById('calendar-days-container');
+      const title = document.querySelector('#view-calendar .page-title');
+      const year = currentCalendarDate.getFullYear();
+      const month = currentCalendarDate.getMonth();
+      if (title) title.textContent = new Date(year, month, 1).toLocaleDateString(undefined, { month:'long', year:'numeric' });
+
+      const headers = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="calendar-day-head">${d}</div>`).join('');
+      const firstDay = new Date(year, month, 1).getDay();
+      const days = new Date(year, month + 1, 0).getDate();
+      let html = headers;
+      for (let i=0;i<firstDay;i++) html += '<div></div>';
+      for (let day=1;day<=days;day++) {
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const dayTasks = tasks.filter(t => t.dueDate === dateStr);
+        const today = new Date();
+        const isToday = today.getFullYear()===year && today.getMonth()===month && today.getDate()===day;
+        html += `<div class="calendar-day ${isToday ? 'today' : ''}"><span class="calendar-day-num">${day}</span>${dayTasks.map(t => `<div class="calendar-event" title="${escapeHtml(t.title)}" style="background:rgba(139,92,246,.2);color:var(--accent-lavender);">${escapeHtml(t.title)}</div>`).join('')}</div>`;
+      }
+      container.innerHTML = html;
+    }
+
+    /* ---------------- ANALYTICS ---------------- */
+    async function loadAnalytics() {
+      try {
+        const weekly = await apiRequest('/analytics/weekly');
+        const categories = await apiRequest('/analytics/categories');
+        const max = Math.max(...weekly.map(x => Number(x.focusMinutes || 0)), 1);
+        const bars = document.querySelectorAll('#view-analytics .chart-bar');
+        weekly.slice(0,7).forEach((item,i) => {
+          if (bars[i]) bars[i].style.height = `${Math.max(6, (Number(item.focusMinutes || 0)/max)*100)}%`;
+          const labels = document.querySelectorAll('#view-analytics .chart-label');
+          if (labels[i]) labels[i].textContent = (item.day || '').toString().slice(0,3);
+        });
+
+        const totalTasks = categories.reduce((sum,c)=>sum+Number(c.count || c.taskCount || 0),0);
+        const catCard = document.querySelector('#view-analytics .analytics-grid .card:last-child');
+        if (catCard) {
+          const existing = catCard.querySelector('.category-summary');
+          if (existing) existing.remove();
+          const summary = document.createElement('div');
+          summary.className = 'category-summary';
+          summary.style.marginTop = '1rem';
+          summary.innerHTML = categories.length ? categories.map(c => `<div style="display:flex;justify-content:space-between;font-size:.8rem;padding:.35rem 0;color:var(--text-muted);"><span>${escapeHtml(c.category)}</span><strong style="color:var(--text-main);">${Number(c.count || c.taskCount || 0)} task${Number(c.count || c.taskCount || 0)===1?'':'s'}</strong></div>`).join('') : '<p style="color:var(--text-muted);font-size:.8rem;">No category data yet.</p>';
+          catCard.appendChild(summary);
+        }
+
+        const dashboard = await apiRequest('/analytics/dashboard');
+        const xp = Number(dashboard.xp || 0);
+        const level = Number(dashboard.level || currentUser?.level || 1);
+        const progressText = document.querySelector('#view-analytics .analytics-grid .card:nth-child(2) span:last-child');
+        const progressStrong = document.querySelector('#view-analytics .analytics-grid .card:nth-child(2) strong');
+        const progressBar = document.querySelector('#view-analytics .analytics-grid .card:nth-child(2) div[style*="width: 72.5%"]');
+        if (progressStrong) progressStrong.textContent = `Lvl ${level}`;
+        if (progressText) progressText.textContent = `${xp} XP`;
+        if (progressBar) progressBar.style.width = `${Math.min(100, xp % 200 / 2)}%`;
+      } catch (error) { showToast(error.message, 'error'); }
+    }
+
+    /* ---------------- ACHIEVEMENTS ---------------- */
+    async function loadAchievements() {
+      const container = document.getElementById('achievements-container');
+      try {
+        const list = await apiRequest('/achievements');
+        container.innerHTML = list.map(a => `
+          <div class="card achievement-card ${a.unlocked ? 'unlocked' : ''}">
+            <div class="achievement-icon"><i class="fa-solid ${achievementIcon(a.achievement_type || a.id)}"></i></div>
+            <div><h4 style="font-size:.95rem;font-weight:700;">${escapeHtml(a.title)}</h4><p style="font-size:.75rem;color:var(--text-muted);">${escapeHtml(a.description || '')}</p><span class="badge ${a.unlocked ? 'badge-green' : 'badge-purple'}" style="margin-top:.5rem;">${a.unlocked ? 'Unlocked' : 'Locked'}</span></div>
+          </div>`).join('');
+      } catch (error) { showToast(error.message, 'error'); }
+    }
+
+    function achievementIcon(type) {
+      const icons = { first_task:'fa-shoe-prints', first_step:'fa-shoe-prints', streak_3:'fa-fire', streak_7:'fa-bolt', focus_5:'fa-brain', speed_runner:'fa-stopwatch', century:'fa-award' };
+      return icons[type] || 'fa-trophy';
+    }
+
+    /* ---------------- MOOD ---------------- */
+    function selectMood(moodText, btn) {
+      selectedMood = moodText;
+      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+
+    async function saveMood() {
+      try {
+        await apiRequest('/analytics/mood', 'POST', { mood: selectedMood });
+        showToast(`Mood saved: ${selectedMood}`, 'success');
+        await loadMoodHistory();
+      } catch (error) { showToast(error.message, 'error'); }
+    }
+
+    async function loadMoodHistory() {
+      // The current try4 design has no history list. We still verify the backend data here.
+      try { await apiRequest('/analytics/mood'); } catch (error) { showToast(error.message, 'error'); }
+    }
+
+    /* ---------------- UTILITIES ---------------- */
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      const icon = type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-info';
+      toast.innerHTML = `<i class="fa-solid ${icon}" style="color:var(--accent-purple);"></i><span>${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+    }
+
+    /* ---------------- STARTUP ---------------- */
+    async function initApp() {
+      updateCurrentDate();
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (!token) {
+        document.getElementById('auth-screen').classList.remove('hidden');
+        document.getElementById('app-container').classList.add('hidden');
+        return;
+      }
+      try {
+        await startAuthenticatedApp();
+      } catch (error) {
+        console.error(error);
+        handleLogout(false);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
